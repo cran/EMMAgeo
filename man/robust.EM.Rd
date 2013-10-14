@@ -59,7 +59,9 @@ Cona, NE Tibetan Plateau, China. Sedimentary Geology 243-244: 169-180.}
 
 
 
-\seealso{\code{\link{EMMA}}, \code{\link{test.robustness}}}
+\seealso{\code{\link{EMMA}}, 
+\code{\link{test.robustness}}, 
+\code{\link{define.limits}}}
 \examples{
 ## load example data set
 data(X.artificial, envir = environment())
@@ -74,7 +76,7 @@ limits = cbind(c(11, 31, 60, 78),
 ## end-member numbers to test
 q  <- 4:8
 ## weight transformation limits to test
-lw <- seq(0, 0.1, by = 0.025)
+lw <- seq(from = 0, to = 0.1, by = 0.025)
 
 ## perform robustness test without rejection criteria and plots
 TR  <- test.robustness(X.trunc, q, lw)

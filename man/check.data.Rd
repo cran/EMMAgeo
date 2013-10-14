@@ -5,7 +5,7 @@
 weight transformation limits (lw) and constant sum scaling
 parameter (c) are checked for consistency. This includes checking
 for absence of missing values, columns containing only zero-values and 
-for numeric data type of variables. Furthermore, a test is performed if 
+for numeric data type of variables. Furthermore, a check tests if 
 lw is below the maximum possible value, preventing numerical instability 
 prior to factor rotation.}
 \usage{check.data(X, q, lw, c, invisible = TRUE)}
@@ -30,7 +30,10 @@ Cona, NE Tibetan Plateau, China. Sedimentary Geology 243-244: 169-180.}
 
 \seealso{\code{\link{EMMA}}}
 \examples{
+## load example data set
 data(X.artificial, envir = environment())
+
+## perform data set check
 check.data(X = X.artificial, q = 6, lw = seq(0, 0.2, 0.01), c = 1)
 }
 

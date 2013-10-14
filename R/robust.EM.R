@@ -124,6 +124,10 @@ pm = FALSE
     
     ## optionally plot results
     if(plot == TRUE) {
+      
+      ## adjust plot margins
+      par(oma = c(0, 1, 0, 0))
+      
       ## read additional arguments list and check/set default values
       extraArgs <- list(...)
       main <- if("main" %in% names(extraArgs)) {extraArgs$main} else
@@ -255,6 +259,10 @@ pm = FALSE
     ## optionally add pm
     if(pm == TRUE) {pm <- check.data(matrix(runif(4), ncol = 2), 
                                      5, 0.01, 100, invisible = FALSE)}
+    
+    ## readjust plot margins
+    par(oma = c(0, 0, 0, 0))
+    
   } else {
     ## CASE 2 - incomplete results list
     
@@ -309,7 +317,9 @@ pm = FALSE
   ## Cona, NE Tibetan Plateau, China. Sedimentary Geology 243-244: 169-180.
   
   ##seealso<<
-  ## \code{\link{EMMA}}, \code{\link{test.robustness}}
+  ## \code{\link{EMMA}}, 
+  ## \code{\link{test.robustness}}, 
+  ## \code{\link{define.limits}}
   
   ##keyword<<
   ## EMMA
@@ -327,7 +337,7 @@ pm = FALSE
   ## end-member numbers to test
   q  <- 4:8
   ## weight transformation limits to test
-  lw <- seq(0, 0.1, by = 0.025)
+  lw <- seq(from = 0, to = 0.1, by = 0.025)
   
   ## perform robustness test without rejection criteria and plots
   TR  <- test.robustness(X.trunc, q, lw)

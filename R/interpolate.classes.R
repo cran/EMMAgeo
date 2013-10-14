@@ -14,8 +14,8 @@ method = "natural",
 ### "periodic" (periodic spline). Default is \code{"natural"}.
 fixed.start = TRUE
 ### Logical scalar, specifying if the outer boundaries should be set 
-### to the same values as in the original matrix. This may become
-### necessary to avoid interpolation errors, see example.
+### to the same values as in the original matrix, default is \code{TRUE}.
+### This may become necessary to avoid interpolation errors, see example.
 ){
   ## transform data structure of X
   if(is.matrix(X) == FALSE) {X <- t(as.matrix(X))}
@@ -73,14 +73,14 @@ fixed.start = TRUE
   ## Cona, NE Tibetan Plateau, China. Sedimentary Geology 243-244: 169-180.
   
   ##seealso<<
-  ## \code{\link{EMMA}}, \code{\link{approx}},\code{\link{spline}}
+  ## \code{\link{EMMA}}, \code{\link{approx}}, \code{\link{spline}}
   
   ##keyword<<
   ## EMMA
 }, ex = function(){
   ## load example data
   data(X.artificial, envir = environment())
-  classes.in <- seq(1, 10, length.out = ncol(X.artificial))
+  classes.in <- seq(from = 1, to = 10, length.out = ncol(X.artificial))
     
   ## Example 1 - decrease the class numbers
   ## define number of output classes

@@ -65,7 +65,7 @@ Vqn <- EMMA(X.artificial, q)$Vqn # assign unscaled end-member loadings
 Vqn.sd <- Vqn * 0.2 # assign a relative standard deviation of 20 \%
 lw.1 <- 0.2 # set lw to 0.2
 lw.2 <- c(0.2, 0.08) # set lw to mean = 0.2 and sd = 0.08
-runs <-  12 # senseless value to increase comuptation speed
+runs <-  12 # senseless value to increase computation speed
 
 ## EXAMPLE 1
 ## Calculate Mqs uncertainty

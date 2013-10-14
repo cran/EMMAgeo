@@ -43,14 +43,16 @@ should be used instead of \code{col}. \code{ylim} can only be modified
 for the first plot. See example section for further advice.}
   \item{pm}{Logical scalar to enable pm.}
 }
-
+\details{The function value \code{$loadings} is redundant but was added for
+user convenience.}
 \value{A list with objects
 \item{q}{Vector with q.}
 \item{lw}{Vector with lw.}
 \item{modes}{Vector with mode class.}
 \item{mRt}{Vector with mean total explained variance.}
-\item{ol}{Vector with number of overlapping end-members.}
-\item{Vqsn}{Matrix with end-member loadings.}
+\item{ol}{Vector with n overlapping end-members.}
+\item{loadings}{Matrix with normalised rescaled end-member loadings.}
+\item{Vqsn}{Matrix with rescaled end-member loadings.}
 \item{Vqn}{Matrix with normalised factor loadings.}}
 \references{Dietze E, Hartmann K, Diekmann B, IJmker J, Lehmkuhl F, Opitz S, 
 Stauch G, Wuennemann B, Borchers A. 2012. An end-member algorithm for 
@@ -67,7 +69,7 @@ data(X.artificial, envir = environment())
 
 ## Example 1 - perform the most simple test
 q  <- 4:7
-lw <- seq(0, 0.1, by = 0.02)
+lw <- seq(from = 0, to = 0.1, by = 0.02)
 
 M1  <- test.robustness(X = X.artificial, q = q, lw = lw, 
                        ol.rej = 1, mRt.rej = 0.8, 

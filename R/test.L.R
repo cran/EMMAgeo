@@ -1,10 +1,9 @@
 test.L <-
 structure(function # Function to evaluate the initial cumulative explained variance.
 ### This function performs eigenspace decomposition using the 
-### weight-transformed matrix W and returns the cumulative explained
-### variance of the resulting eigenvalues prior to factor rotation. Depending  
-### on the number of provided weight transformation limits (lw) a single 
-### vector or a matrix is returned.
+### weight-transformed matrix W to determine the minimum number of end-members.
+### Depending on the number of provided weight transformation limits (lw) a 
+### single vector or a matrix is returned.
 (X,
 ### Numeric matrix with m samples (rows) and n variables (columns).
 lw,
@@ -40,19 +39,24 @@ pm = FALSE
 
   ## loop through all lw values
   for (i in 1:length(lw)) {
-    ## define quantile extraction function
-    qts <- function(X, lw) quantile(X, c(lw, 1-lw), type = 5)
-    ## apply quantile function column-wise
-    ls <- t(apply(X, 2, qts, lw = lw[i]))
+
+    ## calculate weight limit quantiles column-wise
+    ls <- sapply(X = 1:ncol(X), FUN = function(j) {
+      quantile(x = X[,j], probs = c(lw[i], 1 - lw[i]), type = 5)})
+
     ## perform weight-transformation
-    W <- t((t(X) - ls[,1]) / (ls[,2] - ls[,1]))
+    W <- t((t(X) - ls[1,]) / (ls[2,] - ls[1,]))
+
     ## create similarity matrix as outer product
     A <- t(W) %*% W
+
     ## perform eigenspace decomposition
     EIG <- eigen(A)
+
     ## assign raw eigenvectors V and eigenvalues L
     V <- EIG$vectors[,order(seq(ncol(A), 1, -1))]
     L.raw <- EIG$values[order(seq(ncol(A), 1, -1))]
+
     ## calculate cumulative sums of eigenvalues
     L[i,] <- cumsum(sort(L.raw / sum(L.raw), decreasing = TRUE))
   }
@@ -65,6 +69,8 @@ pm = FALSE
   
   ## optional plot of the results (explained variance vs. number of factors)
   if(plot == TRUE) {
+    ## adjust plot margins
+    par(oma = c(0, 1, 0, 0))
     ## read additional arguments list and check/set default values
     extraArgs <- list(...)
     main <- if("main" %in% names(extraArgs)) {extraArgs$main} else
@@ -111,6 +117,10 @@ pm = FALSE
   if(pm == TRUE) {pm <- check.data(matrix(runif(4), ncol = 2),
                                    5, 0.01, 100, invisible = FALSE)}
   
+  ## readjust plot margins
+  par(oma = c(0, 0, 0, 0))
+  
+  
   ##value<< A list with objects
   list(L     = L,    ##<< Vector or matrix of cumulative explained variance.
        q.min = q.min) ##<< Vector with number of factors that passed r.min.
@@ -133,7 +143,7 @@ pm = FALSE
     data(X.artificial, envir = environment())
     
     ## create sequence of weight transformation limits
-    lw <- seq(0, 0.2, 0.02)
+    lw <- seq(from = 0, to = 0.2, 0.02)
     
     ## perform the test and show q.min
     L <- test.L(X = X.artificial, lw = lw, c = 100, plot = TRUE)

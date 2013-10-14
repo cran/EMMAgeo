@@ -20,7 +20,7 @@ autocorrelation
   if(missing(noise) == TRUE) {noise <- 0}
   
   ## rescale individual end-member loadings according to their proportion
-  EMs <- EM * proportion
+  EMs <- EM * as.numeric(proportion)
   
   ## sum up all individual end-member loadings to one composite
   EMs <- apply(EMs, 2, sum)
@@ -54,7 +54,7 @@ autocorrelation
   ##details<<
   ## The function multiplies each end-member with the respective proportion
   ## value, sums the resulting variables, adds uniform noise and normalises
-  ## the resulting mixed sample to 1.
+  ## the resulting mixed sample to 100 %.
   
   ##seealso<<
   ## \code{\link{create.EM}}

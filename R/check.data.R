@@ -4,7 +4,7 @@ structure(function # Function to check data consistency.
 ### weight transformation limits (lw) and constant sum scaling
 ### parameter (c) are checked for consistency. This includes checking
 ### for absence of missing values, columns containing only zero-values and 
-### for numeric data type of variables. Furthermore, a test is performed if 
+### for numeric data type of variables. Furthermore, a check tests if 
 ### lw is below the maximum possible value, preventing numerical instability 
 ### prior to factor rotation.
 (X, 
@@ -62,11 +62,15 @@ invisible = TRUE
    
   ## test range of vector lw
   lw.max <- test.lw(X, lw)$lw.max
+  if(length(lw.max) == 0) {
+    result[length(result) + 1] <- paste("    Note: weight transformation",
+          "limit is out of range.")
+  } else {
   result[length(result) + 1] <- ifelse(max(lw) > lw.max,
     paste("    Note: weight transformation limit(s) are out",
           "of range. Maximum value is", lw.max),
     "Maximum weight transformation limit value passed test... OK")
-  
+  }
   ## test if all samples sum up to constant value
   X.c <- round(apply(X, 1, sum) - rep(c, nrow(X)), 6)
   X.unmet <- seq(1, nrow(X))[X.c != 0]
@@ -77,7 +81,6 @@ invisible = TRUE
       "All samples sum up to constant sum... OK")
   
   if(invisible == FALSE) {
-    require(shape)
     
     par(new = TRUE)
     plot(NA, xlim = c(0, 10), ylim = c(0, 10), 
@@ -148,6 +151,9 @@ invisible = TRUE
   ##keyword<<
   ## EMMA
 }, ex = function(){
+  ## load example data set
   data(X.artificial, envir = environment())
+  
+  ## perform data set check
   check.data(X = X.artificial, q = 6, lw = seq(0, 0.2, 0.01), c = 1)
   })

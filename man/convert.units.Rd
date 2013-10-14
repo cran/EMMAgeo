@@ -1,6 +1,6 @@
 \name{convert.units}
 \alias{convert.units}
-\title{Function to convert phi and micrometers.}
+\title{Function to convert between phi and micrometers.}
 \description{The function converts values from the phi-scale to the 
 micrometer-scale and vice versa.}
 \usage{convert.units(phi, mu)}

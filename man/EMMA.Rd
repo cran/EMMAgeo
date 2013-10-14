@@ -1,7 +1,7 @@
 \name{EMMA}
 \alias{EMMA}
 \title{Function for end-member modelling analysis.}
-\description{Multivariate data (m samples composed of n variables) is decomposed
+\description{A multivariate data set (m samples composed of n variables) is decomposed
 by eigenspace analysis and modelled with a given number of end-members 
 (q). Several steps of scaling, transformation, normalisation, eigen 
 space decomposition, factor rotation, data modelling and evaluation are
@@ -16,7 +16,7 @@ cf. Klovan & Imbrie (1971); default is 0.}
   \item{c}{Numeric scalar specifying the constant sum scaling parameter, e.g. 1, 
 100, 1000; default is 100.}
   \item{Vqn}{Numeric matrix specifying optional unscaled user-defined end-member
-loadings. If provided, these are used instead of model-derieved ones.}
+loadings. If provided, these are used instead of model-derived ones.}
   \item{EM.ID}{Character vector with end-member names. If present, these will be set
 as row-names of the output data set and used in the legend text if
 a legend is enabled.}
@@ -41,8 +41,12 @@ should be used instead of \code{col}. See example section for
 further advice.}
   \item{pm}{Logical scalar to enable pm.}
 }
-
+\details{The function values \code{$loadings} and \code{$scores} are redundant.
+They are essentially the same as \code{$Vqsn} and \code{$Mqs}. However,
+they are included for user convenience.}
 \value{A list with numeric matrix objects.
+\item{loadings}{Normalised rescaled end-member loadings.}
+\item{scores}{Rescaled end-member scores.}
 \item{Vqn}{Normalised end-member loadings.}
 \item{Vqsn}{Normalised rescaled end-member loadings.}
 \item{Mqs}{Rescaled end-member scores.}
@@ -73,12 +77,12 @@ Professsional Papers 574.}
 \examples{
 ## load example data and set phi-vector
 data(X.artificial, envir = environment())
-phi <- seq(1, 10, length.out = ncol(X.artificial))
+phi <- seq(from = 1, to = 10, length.out = ncol(X.artificial))
 
 ## perform EMMA with 5 end-members
 EM <- EMMA(X = X.artificial, q = 5, lw = 0.05, c = 100, plot = TRUE)
 
-## perform EMMA with 4 end-members and more graphical sttings
+## perform EMMA with 4 end-members and more graphical settings
 EM <- EMMA(X = X.artificial, q = 4, lw = 0.05, c = 100, 
            plot = TRUE,
            EM.ID = c("EM 1", "EM 2", "EM 3", "EM 4"),

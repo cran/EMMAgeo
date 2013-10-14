@@ -17,7 +17,7 @@ odd values are allowed.}
 }
 \details{The function multiplies each end-member with the respective proportion
 value, sums the resulting variables, adds uniform noise and normalises
-the resulting mixed sample to 1.}
+the resulting mixed sample to 100 \%.}
 \value{Numeric vector comprising a sample composed of known
 proportions of end-members.}
 

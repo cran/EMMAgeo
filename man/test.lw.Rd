@@ -2,7 +2,8 @@
 \alias{test.lw}
 \title{Function to test maximum valid lw value.}
 \description{This function performs the weight transformation of the data matrix
-after Klovan & Imbrie (1971) with different weight limits and returns the 
+after Klovan & Imbrie (1971) and performs EMMA() with different weight 
+limits to check if valied results are yielded. It returns the 
 maximum value for which the transformation remains stable.}
 \usage{test.lw(X, lw)}
 \arguments{
@@ -32,7 +33,7 @@ Mathematical Geology 3: 61-77.}
 data(X.artificial, envir = environment())
 
 ## create weight transformation limits vector
-lw <- seq(0, 0.6, by = 0.02)
+lw <- seq(from = 0, to = 0.6, by = 0.02)
 
 ## test the vector
 test.lw(X = X.artificial, lw = lw)
