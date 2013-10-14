@@ -1,8 +1,8 @@
 \name{residual.EM}
 \alias{residual.EM}
 \title{Function to evaluate residual end-member loading.}
-\description{This function calculates the residual end-member loading. It uses the 
-modelled end-member loadings as input and evaluates the root of 1 minus 
+\description{This function calculates an optional residual end-member loading. It uses 
+the modelled end-member loadings as input and evaluates the root of 1 minus 
 the sum of all squared loadings to analyse the remaining variance, e.g. 
 if not all (robust) EMs are included (cf. Dietze et al., 2012). Negative 
 values are set to zero.}
@@ -35,8 +35,8 @@ limits = cbind(c(11, 31, 60, 78),
 
 ## define end-member numbers to test
 q  <- 4:8
-## define weight transformation limits to test
-lw <- seq(0, 0.1, by = 0.05)
+## define weight transformation limits
+lw <- seq(from = 0, to = 0.1, by = 0.05)
 ## perform the robustness test
 TR  <- test.robustness(X.trunc, q, lw, c = 100)
 

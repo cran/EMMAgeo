@@ -1,5 +1,5 @@
 convert.units <-
-structure(function(# Function to convert phi and micrometers.
+structure(function(# Function to convert between phi and micrometers.
 ### The function converts values from the phi-scale to the 
 ### micrometer-scale and vice versa.
 phi,

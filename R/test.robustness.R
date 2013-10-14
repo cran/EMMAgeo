@@ -184,7 +184,8 @@ pm = FALSE
       {c(0, max(Vqsn.t, na.rm = TRUE))}
     
     ## setup plot area
-    par(mfrow = c(1, 2))
+    par(mfrow = c(1, 2),
+        oma = c(0, 1, 0, 0))
     
     ## plot end-member loadings
     plot(classunits,
@@ -208,7 +209,8 @@ pm = FALSE
     rug(data.t[,3])
     
     ## reset format of the plot area
-    par(mfrow = c(1, 1))
+    par(mfrow = c(1, 1),
+        oma = c(0, 0, 0, 0))
   }
   
   ## optionally add pm
@@ -216,15 +218,20 @@ pm = FALSE
                                    5, 0.01, 100, invisible = FALSE)}
   
   ##value<< A list with objects
-  list(q     = data.t[,1], ##<< Vector with q.
-       lw    = data.t[,2], ##<< Vector with lw.
-       modes = data.t[,3], ##<< Vector with mode class.
-       mRt   = data.t[,4], ##<< Vector with mean total explained variance.
-       ol    = data.t[,5], ##<< Vector with number of overlapping end-members.
-       Vqsn  = Vqsn.t,     ##<< Matrix with end-member loadings.
-       Vqn   = Vqn.t)      ##<< Matrix with normalised factor loadings.
+  list(q        = data.t[,1], ##<< Vector with q.
+       lw       = data.t[,2], ##<< Vector with lw.
+       modes    = data.t[,3], ##<< Vector with mode class.
+       mRt      = data.t[,4], ##<< Vector with mean total explained variance.
+       ol       = data.t[,5], ##<< Vector with n overlapping end-members.
+       loadings = Vqsn.t,     ##<< Matrix with normalised rescaled end-member loadings.
+       Vqsn     = Vqsn.t,     ##<< Matrix with rescaled end-member loadings.
+       Vqn      = Vqn.t)      ##<< Matrix with normalised factor loadings.
   ##end<<
 
+  ##details<<
+  ## The function value \code{$loadings} is redundant but was added for
+  ## user convenience.
+  
   ##references<<
   ## Dietze E, Hartmann K, Diekmann B, IJmker J, Lehmkuhl F, Opitz S, 
   ## Stauch G, Wuennemann B, Borchers A. 2012. An end-member algorithm for 
@@ -239,7 +246,7 @@ pm = FALSE
   
   ## Example 1 - perform the most simple test
   q  <- 4:7
-  lw <- seq(0, 0.1, by = 0.02)
+  lw <- seq(from = 0, to = 0.1, by = 0.02)
   
   M1  <- test.robustness(X = X.artificial, q = q, lw = lw, 
                          ol.rej = 1, mRt.rej = 0.8, 

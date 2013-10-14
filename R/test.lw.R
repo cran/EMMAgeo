@@ -1,7 +1,8 @@
 test.lw <-
 structure(function # Function to test maximum valid lw value.
 ### This function performs the weight transformation of the data matrix
-### after Klovan & Imbrie (1971) with different weight limits and returns the 
+### after Klovan & Imbrie (1971) and performs EMMA() with different weight 
+### limits to check if valied results are yielded. It returns the 
 ### maximum value for which the transformation remains stable.
 (X,
 ### Numeric matrix with m samples (rows) and n variables (columns).
@@ -14,18 +15,27 @@ lw
   
   ## loop through all elements of vector lw
   for(i in 1:length(lw)) {
+
     ## rescale X constant sum
     X  <- X / apply(X, 1, sum)
-    ## define quantile extraction function
-    qts <- function(X, lw) quantile(X, c(lw, 1-lw), type = 5)
-    ## apply quantile function column-wise
-    ls <- t(apply(X, 2, qts, lw = lw[i]))
+
+    ## calculate weight limit quantiles column-wise
+    ls <- sapply(X = 1:ncol(X), FUN = function(j) {
+      quantile(x = X[,j], probs = c(lw[i], 1 - lw[i]), type = 5)})
+
     ## perform weight-transformation
-    W <- t((t(X) - ls[,1]) / (ls[,2] - ls[,1]))
+    W <- t((t(X) - ls[1,]) / (ls[2,] - ls[1,]))
+
     ## optional break when transformation is erroneous
     if (is.na(mean(W))) {
       i = i - 1
       break}
+    
+    ## optional break when Mqs from EMMA cannot be calculated
+    if(is.na(mean(EMMA(X = X, q = 2, lw = lw[i])$Mqs))) {
+      i = i - 1
+      break
+    }
   }
  
   ## assign last valid step number and lw-value
@@ -57,7 +67,7 @@ lw
   data(X.artificial, envir = environment())
   
   ## create weight transformation limits vector
-  lw <- seq(0, 0.6, by = 0.02)
+  lw <- seq(from = 0, to = 0.6, by = 0.02)
   
   ## test the vector
   test.lw(X = X.artificial, lw = lw)

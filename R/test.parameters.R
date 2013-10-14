@@ -118,6 +118,8 @@ pm = FALSE
   }
   
   ## plot outputs
+  ## adjust plot margins
+  par(oma = c(0, 1, 0, 0))
   ## read plot-independent plot parameters and check/set default values
   extraArgs <- list(...)
   colour <- if("colour" %in% names(extraArgs)) {extraArgs$colour} else
@@ -146,7 +148,7 @@ pm = FALSE
          expression(paste("Error (", bar(E)[m], ")", sep = "")))}
         
     ## setup plot area
-    par(mfcol = c(1,2))
+    par(mfcol = c(1, 2))
 
     ## plot matrix q-lw as image
     image(q, lw, mEm,
@@ -163,6 +165,7 @@ pm = FALSE
       main = main[2],
       xlab = xlab[2],
       ylab = ylab[2],
+      ylim = range(mEm, na.rm = TRUE),
       col = colour[1])
     if(nrow(mEm > 1)) for (i in 2:length(lw)) {lines(mEm[,i], col = colour[i])}
     
@@ -208,11 +211,12 @@ pm = FALSE
     if(length(lw) > 1) contour(q, lw, mEn, add = TRUE,
       zlim = c(min(mEn, na.rm = TRUE), max(mEn, na.rm = TRUE)))
     
-    ## plot mEm vs. q
+    ## plot mEn vs. q
     plot(seq(min(q), max(q)), mEn[,1], type = "l", 
          main = main[2],
          xlab = xlab[2],
          ylab = ylab[2],
+         ylim = range(mEn, na.rm = TRUE),
          col = colour[1])
     if(nrow(mEm > 1)) for (i in 2:length(lw)) {lines(mEn[,i], col = colour[i])}
     
@@ -228,7 +232,7 @@ pm = FALSE
     }
 
     ## reset plot area
-    par(mfcol = c(1,1))
+    par(mfcol = c(1, 1))
   }
   
   ## optional plot mRm
@@ -263,6 +267,7 @@ pm = FALSE
          main = main[2],
          xlab = xlab[2],
          ylab = ylab[2],
+         ylim = range(mRm, na.rm = TRUE),
          col = colour[1])
     if(nrow(mRm > 1)) for (i in 2:length(lw)) {lines(mRm[,i], col = colour[i])}
     
@@ -313,6 +318,7 @@ pm = FALSE
          main = main[2],
          xlab = xlab[2],
          ylab = ylab[2],
+         ylim = range(mRn, na.rm = TRUE),
          col = colour[1])
     if(nrow(mRn > 1)) for (i in 2:length(lw)) {lines(mRn[,i], col = colour[i])}
     
@@ -363,6 +369,7 @@ pm = FALSE
          main = main[2],
          xlab = xlab[2],
          ylab = ylab[2],
+         ylim = range(mRt, na.rm = TRUE),
          col = colour[1])
     if(nrow(mRt > 1)) for (i in 2:length(lw)) {lines(mRt[,i], col = colour[i])}
     
@@ -408,6 +415,9 @@ pm = FALSE
   if(pm == TRUE) {pm <- check.data(matrix(runif(4), ncol = 2),
                                    5, 0.01, 100, invisible = FALSE)}
   
+  ## readjust plot margins
+  par(oma = c(0, 0, 0, 0))
+  
   ##value<< A list with result objects
   list(mEm   = mEm,     ##<< Absolute row-wise model error.
        mEn   = mEn,     ##<< Absolute column-wise model error.
@@ -445,7 +455,7 @@ pm = FALSE
   
   ## define test parameters
   q <- 2:8 # number of end-members
-  lw <- seq(0, 0.3, by = 0.1) # weight limits
+  lw <- seq(from = 0, to = 0.3, by = 0.1)
 
   ## test parameter influence and plot mean total explained variance
   TP <- test.parameters(X = X.trunc, q = q, lw = lw, plot = "mRt",

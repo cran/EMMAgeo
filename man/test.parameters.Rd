@@ -68,7 +68,7 @@ X.trunc <- X.artificial[1:20,]
 
 ## define test parameters
 q <- 2:8 # number of end-members
-lw <- seq(0, 0.3, by = 0.1) # weight limits
+lw <- seq(from = 0, to = 0.3, by = 0.1)
 
 ## test parameter influence and plot mean total explained variance
 TP <- test.parameters(X = X.trunc, q = q, lw = lw, plot = "mRt",

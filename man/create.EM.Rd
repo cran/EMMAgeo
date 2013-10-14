@@ -32,8 +32,10 @@ the mixed normal distributions according to the input parameters.}
 \examples{
 ## set lower and upper class boundary, number of classes and class units
 boundaries <- c(0, 11)
-n  <- 40
-phi   <- seq(boundaries[1], boundaries[2], length.out = n)
+n <- 40
+phi <- seq(from = boundaries[1], 
+           to = boundaries[2], 
+           length.out = n)
 
 ## create two artificial end-member loadings
 EMa.1 <- create.EM(p1 = c(2, 5), p2 = c(1, 0.8), s = c(0.7, 0.3), 

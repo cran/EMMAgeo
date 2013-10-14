@@ -2,10 +2,9 @@
 \alias{test.L}
 \title{Function to evaluate the initial cumulative explained variance.}
 \description{This function performs eigenspace decomposition using the 
-weight-transformed matrix W and returns the cumulative explained
-variance of the resulting eigenvalues prior to factor rotation. Depending  
-on the number of provided weight transformation limits (lw) a single 
-vector or a matrix is returned.}
+weight-transformed matrix W to determine the minimum number of end-members.
+Depending on the number of provided weight transformation limits (lw) a 
+single vector or a matrix is returned.}
 \usage{test.L(X, lw, c, r.min = 0.95, plot = FALSE, legend, ..., pm = FALSE)}
 \arguments{
   \item{X}{Numeric matrix with m samples (rows) and n variables (columns).}
@@ -44,7 +43,7 @@ Cona, NE Tibetan Plateau, China. Sedimentary Geology 243-244: 169-180.}
 data(X.artificial, envir = environment())
 
 ## create sequence of weight transformation limits
-lw <- seq(0, 0.2, 0.02)
+lw <- seq(from = 0, to = 0.2, 0.02)
 
 ## perform the test and show q.min
 L <- test.L(X = X.artificial, lw = lw, c = 100, plot = TRUE)
