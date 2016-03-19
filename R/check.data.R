@@ -1,27 +1,59 @@
-check.data <-
-structure(function # Function to check data consistency.
-### The input data matrix (X), number of end-members (q),
-### weight transformation limits (lw) and constant sum scaling
-### parameter (c) are checked for consistency. This includes checking
-### for absence of missing values, columns containing only zero-values and 
-### for numeric data type of variables. Furthermore, a check tests if 
-### lw is below the maximum possible value, preventing numerical instability 
-### prior to factor rotation.
-(X, 
-### Numeric matrix with m samples (rows) and n variables (columns).
-q, 
-### Numeric scalar with number of end-members to be modelled.
-lw,
-### Numeric scalar or vector specifying the weight transformation limit, i.e. 
-### quantile.
-c,
-### Numeric scalar specifying the constant sum scaling parameter, e.g. 1, 
-### 100, 1000.
-invisible = TRUE
-### Logical scalar setting visibility option.
+#' Function to check data consistency.
+#' 
+#' The input data matrix (X), number of end-members (q), weight transformation
+#' limits (l) and constant sum scaling parameter (c) are checked for
+#' consistency. This includes checking for absence of missing values, columns
+#' containing only zero-values and for numeric data type of variables.
+#' Furthermore, a check tests if l is below the maximum possible value,
+#' preventing numerical instability prior to factor rotation.
+#' 
+#' 
+#' @param X Numeric matrix with m samples (rows) and n variables (columns).
+#' @param q Numeric scalar with number of end-members to be modelled.
+#' @param l Numeric scalar or vector specifying the weight transformation
+#' limit, i.e.  quantile.
+#' @param c Numeric scalar specifying the constant sum scaling parameter, e.g.
+#' 1, 100, 1000.
+#' @param invisible Logical scalar setting visibility option.
+#' @param \dots Further arguments passed to the function.
+#' @return Character vector with test results.
+#' @author Michael Dietze, Elisabeth Dietze
+#' @seealso \code{\link{EMMA}}
+#' @references Dietze E, Hartmann K, Diekmann B, IJmker J, Lehmkuhl F, Opitz S,
+#' Stauch G, Wuennemann B, Borchers A. 2012. An end-member algorithm for
+#' deciphering modern detrital processes from lake sediments of Lake Donggi
+#' Cona, NE Tibetan Plateau, China. Sedimentary Geology 243-244: 169-180.
+#' @keywords EMMA
+#' @examples
+#' 
+#' ## load example data set
+#' data(X, envir = environment())
+#' 
+#' ## perform data set check
+#' check.data(X = X, 
+#'            q = 6, 
+#'            l = seq(from = 0, 
+#'                    to = 0.2, 
+#'                    by = 0.01), 
+#'            c = 1)
+#' 
+#' @export check.data
+check.data <- function(
+  X, 
+  q, 
+  l,
+  c,
+  invisible = TRUE,
+  ...
 ){
+  
   ## create result vector
   result <- NA
+  
+  ## check for l vs. lw
+  if("lw" %in% names(list(...))) {
+    stop('Parameter "lw" is depreciated. Use "l" instead.')
+  }
   
   ## test data type
   result[length(result) + 1] <- ifelse(is.numeric(X) == FALSE, 
@@ -32,8 +64,8 @@ invisible = TRUE
     "    Warning: end-member vector q has non-numeric values.",
     "End-member vector passed test... OK")
  
-  result[length(result) + 1] <- ifelse(is.numeric(lw) == FALSE, 
-    paste("    Warning: weight transformation limit vector lw", 
+  result[length(result) + 1] <- ifelse(is.numeric(l) == FALSE, 
+    paste("    Warning: weight transformation limit vector l", 
           "contains non-numeric values."),
     "Weight transformation limit vector passed test... OK")
   
@@ -43,36 +75,37 @@ invisible = TRUE
   
   ## check for samples with NA-values
   result[length(result) + 1] <- ifelse(sum(complete.cases(X)) < nrow(X),
-    paste("Warning: The following samples comprise NA-values: ",
+    paste("    Warning: The following samples comprise NA-values: ",
           seq(1, nrow(X))[!complete.cases(X)],
-          ". These rows are excluded for further tests.",
+          ".",
           sep = ""), "NA-test passed... OK")
   if(sum(complete.cases(X)) < nrow(X)) {X <- X[complete.cases(X),]}
   
   ## test if columns contain only 0 values
-  X.0 <- apply(X, 2, sum)
+  X.0 <- apply(X, 2, sum, na.rm = TRUE)
   X.unmet <- seq(1, ncol(X))[X.0 == 0]
   m.unmet <- paste(X.unmet, collapse = ", ")
   if(length(X.unmet) > 0) {
-    stop("    Warning: the following columns contain only zero values: ",
-      m.unmet, ". These should be removed prior to any further tasks.",
+    paste("    Warning: the following columns contain only zero values: ",
+      m.unmet, ".",
       sep = "")} else {
         result[length(result) + 1] <- "Test for zero-only values passed... OK"
       }
    
-  ## test range of vector lw
-  lw.max <- test.lw(X, lw)$lw.max
-  if(length(lw.max) == 0) {
-    result[length(result) + 1] <- paste("    Note: weight transformation",
+  ## test range of vector l
+  l.max <- test.l(X, l)$l.max
+  if(length(l.max) == 0) {
+    result[length(result) + 1] <- paste("    Warning: weight transformation",
           "limit is out of range.")
   } else {
-  result[length(result) + 1] <- ifelse(max(lw) > lw.max,
+  result[length(result) + 1] <- ifelse(max(l) > l.max,
     paste("    Note: weight transformation limit(s) are out",
-          "of range. Maximum value is", lw.max),
+          "of range. Maximum value is", l.max),
     "Maximum weight transformation limit value passed test... OK")
   }
+  
   ## test if all samples sum up to constant value
-  X.c <- round(apply(X, 1, sum) - rep(c, nrow(X)), 6)
+  X.c <- round(apply(X, 1, sum) - rep(c, nrow(X)), 5)
   X.unmet <- seq(1, nrow(X))[X.c != 0]
   m.unmet <- paste(X.unmet, collapse = ", ")
   result[length(result) + 1] <- ifelse(length(X.unmet) >= 1,
@@ -108,13 +141,13 @@ invisible = TRUE
     
     for(i in 1:n_frames){
       # define circles
-      filledcircle(r1 = r1, r2 = 0.00001, mid = c(x1[i], y1[i]), 
+      shape::filledcircle(r1 = r1, r2 = 0.00001, mid = c(x1[i], y1[i]), 
                    from = angles_mouth[i], to = 2 * pi - angles_mouth[i], 
                    col = "yellow")
-      filledcircle(r1 = r2, r2 = 0.00001, mid = c(x2[i], y2[i]), 
+      shape::filledcircle(r1 = r2, r2 = 0.00001, mid = c(x2[i], y2[i]), 
                    from = angles_mouth[i], to = 2 * pi - angles_mouth[i], 
                    col = "yellow")
-      filledcircle(r1 = r4, r2 = 0.00001, mid = c(x4[i], y4[i]), 
+      shape::filledcircle(r1 = r4, r2 = 0.00001, mid = c(x4[i], y4[i]), 
                    from = angles_mouth[i] + 3, to = 2 * pi - angles_mouth[i] + 3, 
                    col = "yellow")
       
@@ -126,34 +159,15 @@ invisible = TRUE
       Sys.sleep(dt)
       
       # define white background
-      plotcircle(r = 1.1 * r1, mid = c(x1[i], y1[i]), 
+      shape::plotcircle(r = 1.1 * r1, mid = c(x1[i], y1[i]), 
                  col = "white", lcol = "white")
-      plotcircle(r = 1.1 * r2, mid = c(x2[i], y2[i]), 
+      shape::plotcircle(r = 1.1 * r2, mid = c(x2[i], y2[i]), 
                  col = "white", lcol = "white")
-      plotcircle(r = 1.1 * r4, mid = c(x4[i], y4[i]), 
+      shape::plotcircle(r = 1.1 * r4, mid = c(x4[i], y4[i]), 
                  col = "white", lcol = "white")
     }
   }
   
   ## return result
   return(result[2:length(result)])
-  ### Character vector with test results.
-  
-  ##references<<
-  ## Dietze E, Hartmann K, Diekmann B, IJmker J, Lehmkuhl F, Opitz S, 
-  ## Stauch G, Wuennemann B, Borchers A. 2012. An end-member algorithm for 
-  ## deciphering modern detrital processes from lake sediments of Lake Donggi 
-  ## Cona, NE Tibetan Plateau, China. Sedimentary Geology 243-244: 169-180.
-    
-  ##seealso<<
-  ## \code{\link{EMMA}}
-  
-  ##keyword<<
-  ## EMMA
-}, ex = function(){
-  ## load example data set
-  data(X.artificial, envir = environment())
-  
-  ## perform data set check
-  check.data(X = X.artificial, q = 6, lw = seq(0, 0.2, 0.01), c = 1)
-  })
+}
