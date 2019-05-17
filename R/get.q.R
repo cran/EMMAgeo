@@ -4,23 +4,51 @@
 #' transformation limits to generate a matrix of minimum and maximum likely 
 #' numbers of end-members to be used to model and extract robust end-members.
 #' 
+#' The parameter \code{q.min} should be at least 2 because otherwise the 
+#' entire dataset would consist of one end-member and there would be no
+#' variability at all. The parameter \code{q.max} is set to 10 by default,
+#' based on practical issues. In natural systems, there are only rarely 
+#' occasions when such a high number of sediment transport regimes may be
+#' preserved in and can be resolved from sedimentary deposits. The parameter
+#' \code{l} should be a vector between the minimum possible (zero) and maximum
+#' possible value (by definition the median, 0.5, but usually a lower value).
+#' Whensubmitting only a scalar, the variability can be only due to the range
+#' of possible endmembers (between \code{q.min} and \code{q.max}). If the 
+#' parameter \code{correct.output} is enabled, this can decrease the number of 
+#' valid values for \code{l}, i.e. the number of rows of the output matrix 
+#' may no longer be the same as the length of the input vector of \code{l}. In 
+#' such a case the vector \code{l} must be replaced by the rownames of the 
+#' output matrix (\code{l <- as.numeric(rownames(get.q()))}).
 #' 
-#' @param X Numeric matrix with m samples (rows) and n variables (columns).
-#' @param l Numeric vector, weight transformation limits, default is zero.
-#' @param q.min Numeric scalar, minimum number of end-members to use, default 
-#' is 2.
-#' @param q.max Numeric scalar, maximum number of end-members to use, default 
-#' is 10.
-#' @param criteria.min Numeric scalar, minimum value of explained variance 
-#' reached to be a valid model realisation, default is 0.5.
-#' @param criteria.max Character or numeric scalar, either keyword 
+#' 
+#' @param X \code{Numeric} matrix, input data set with m samples (rows) 
+#' and n variables (columns).
+#' 
+#' @param l \code{Numeric} vector, weight transformation limits, default 
+#' is zero.
+#' 
+#' @param q.min \code{Numeric} scalar, minimum number of end-members to use, 
+#' default is 2.
+#' 
+#' @param q.max \code{Numeric} scalar, maximum number of end-members to use, 
+#' default is 10.
+#' 
+#' @param criteria.min \code{Numeric} scalar, minimum value of explained 
+#' variance reached to be a valid model realisation, default is 0.5.
+#' 
+#' @param criteria.max \code{Character} or numeric scalar, either keyword 
 #' \code{"local_max"} to use first local maximum or any numeric value of 
 #' explained variance, default is \code{"local_max"}.
-#' @param correct.output Logical scalar, option to correct the output for 
-#' twisted values and remove combinations with NA-values.
+#' 
+#' @param correct.output \code{Logical} scalar, option to correct the output 
+#' for twisted values and remove combinations with NA-values. See details.
+#' 
 #' @param ... Further arguments, passed to the function.
-#' @return Numeric matrix with minimum and maximum numbers of end-members as 
-#' well as corresponding weight transformation values as rownames.
+#' 
+#' @return \code{Numeric} matrix of class \code{"EMMAgeo_q"}, minimum and 
+#' maximum numbers of end-members as well as corresponding weight 
+#' transformation values as rownames.
+#' 
 #' @author Michael Dietze, Elisabeth Dietze
 #' @seealso \code{\link{EMMA}}, \code{\link{test.parameters}}, 
 #' \code{\link{test.robustness}}
@@ -32,7 +60,7 @@
 #' @examples
 #' 
 #' ## load example data set
-#' data(X, envir = environment())
+#' data("example_X")
 #' 
 #' ## create parameter matrix
 #' get.q(X = X, l = c(0, 0.05, 0.10, 0.15))
@@ -136,6 +164,9 @@ get.q <- function(X,
   
   ## remove na-cases
   q <- cbind(na.omit(object = q))
+  
+  ## set class
+  class(q) <- "EMMAgeo_q"
   
   ## return result
   return(q)

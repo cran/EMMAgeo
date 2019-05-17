@@ -1,4 +1,4 @@
-#' Function to test maximum valid l value.
+#' Test a vector of weight transformation limits for mximum value.
 #' 
 #' This function performs the weight transformation of the data matrix after
 #' Klovan & Imbrie (1971) and performs EMMA() with different weight limits to
@@ -6,12 +6,18 @@
 #' the transformation remains stable.
 #' 
 #' 
-#' @param X Numeric matrix with m samples (rows) and n variables (columns).
-#' @param l Numeric vector specifying the weight transformation limit, i.e.
+#' @param X \code{Numeric} matrix, input data set with m samples (rows) 
+#' and n variables (columns).
+#' 
+#' @param l \code{Numeric} vector, weight transformation limit, i.e.
 #' quantile; default is 0.
+#' 
 #' @param \dots Further arguments passed to the function.
-#' @return A list with objects \item{step}{Numeric scalar with position of last
-#' valid value.} \item{l.max}{Numeric scalar with last valid value of l.}
+#' 
+#' @return \code{List} with objects \item{step}{Numeric scalar with position 
+#' of the last valid value.} \item{l.max}{Numeric scalar with last valid 
+#' value of \code{l}.}
+#' 
 #' @author Michael Dietze, Elisabeth Dietze
 #' @seealso \code{\link{EMMA}}, \code{\link{check.data}},
 #' \code{\link{test.parameters}}
@@ -26,7 +32,7 @@
 #' @examples
 #' 
 #' ## load example data set
-#' data(X, envir = environment())
+#' data(example_X)
 #' 
 #' test <- test.l(X = X, l = seq(from = 0, to = 0.6, by = 0.1))
 #' 

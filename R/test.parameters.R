@@ -1,43 +1,19 @@
-#' Function to evaluate influence of model parameters.
+#' Evaluate influence of model parameters.
 #' 
 #' All possible combinations of number of end-members and weight transformation
-#' limits are used to perform EMMA. The function returns matrices of absolute
-#' and relative measures of individual model performance.
+#' limits are used to perform EMMA and evaluate the absolute and relative 
+#' measures of individual model performance.
 #' 
 #' The mean total explained variance mRt may be used to define a maximum number
 #' of meaningful end-members for subsequent modelling, e.g. as the number of
-#' end-members, which reaches the first local mRt maximum.\cr\cr Overlapping is
+#' end-members, which reaches the first local mRt maximum.\cr Overlapping is
 #' defined as one end-member having its mode within the "area" of any other
-#' end-member, which is genetically not explainable.\cr\cr Special 
-#' acknowledgements go to Christoph Burow for his efforts to implement the 
-#' multicore functionality to this function.
-#' 
-#' @param X Numeric matrix with m samples (rows) and n variables (columns).
-#' @param q Numeric vector of length two, specifying the minimum and maximum
-#' number of end-members to be modelled.
-#' @param l Numeric vector specifying the weight tranformation limit, i.e.
-#' quantile; default is 0.
-#' @param c Numeric scalar specifying the constant sum scaling parameter, e.g.
-#' 1, 100, 1000; default is 0.
-#' @param rotation Character scalar, rotation type, default is "Varimax" (cf.
-#' Dietze et al., 2012). One out of the rotations provided in GPArotation is
-#' possible (cf. \code{\link{rotations}}).
-#' @param plot Character scalar, optional graphical output of the results.
-#' Specify which tested parameter will be plotted: "mEm" (mean absolute
-#' row-wise error), "mEn" (mean absolute column-wise error), "mRm" (mean
+#' end-member, which is genetically not explainable.\cr Keywords to specify, 
+#' which tested parameter will be plotted: "mEm" (mean absolute row-wise 
+#' error), "mEn" (mean absolute column-wise error), "mRm" (mean
 #' relative row-wise error), "mRn" (mean relative column-wise error), "mRt"
-#' (mean relative total error), "ol" (number of overlapping end-members). All
-#' plots except "ol" are colour-coded bitmaps of q, l and the specified test
-#' parameter and line-plots the specified parameter vs. q.
-#' @param legend Character scalar, specifying legend position (cf.
-#' \code{\link{legend}}).  If omitted, no legend will be plotted, default is no
-#' legend.
-#' @param progressbar Logical scalar, optionally show a progress bar, default
-#' is \code{FALSE}. Only available if option \code{multicore} is not used.
-#' @param multicore Logical scalar, optionally ditribute calculations to all 
-#' available cores of the computer, default is \code{TRUE}.
-#' @param \dots Additional arguments passed to the plot function. Since the
-#' function returns two plots (except for plot option "ol"), additional
+#' (mean relative total error) and "ol" (number of overlapping end-members).\cr
+#' Since the function returns two plots (except for option "ol"), additional
 #' graphical parameters must be specified as vector with the first element for
 #' the first plot and the second element for the second plot. If graphical
 #' parameters are natively vectors (e.g. a sequence of colours), they must be
@@ -45,8 +21,37 @@
 #' to the second plot. Colours only apply to the second plot as well. If
 #' colours are specified, \code{colour} should be used instead of \code{col}.
 #' See example section for further advice.
-#' @param pm Logical scalar to enable pm.
-#' @return A list with result objects \item{mEm}{Absolute row-wise model
+#' 
+#' @param X \code{Numeric} matrix, input data set with m samples (rows) 
+#' and n variables (columns).
+#' 
+#' @param q \code{Numeric} vector, numbers of end-members to be modelled,
+#' e.g., \code{2:10}.
+#' 
+#' @param l \code{Numeric} vector specifying the weight tranformation limit, 
+#' i.e. quantile; default is 0.
+#' 
+#' @param c \code{Numeric} scalar specifying the constant sum scaling 
+#' parameter, e.g., 1, 100, 1000; default is 0.
+#' 
+#' @param rotation \code{Character} scalar, rotation type, default is 
+#' \code{"Varimax"}.
+#' 
+#' @param plot \code{Character} scalar, optional graphical output of the 
+#' results as keyword (see details). All plots except "ol" are colour-coded 
+#' bitmaps of q, l and the specified test parameter and line-plots the 
+#' specified parameter vs. \code{q}.
+#' 
+#' @param legend \code{Character} scalar, specifying legend position (cf.
+#' \code{\link{legend}}).  If omitted, no legend will be plotted, default is no
+#' legend.
+#' 
+#' @param multicore \code{Logical} scalar, optionally ditribute calculations 
+#' to all available cores of the computer, default is \code{TRUE}.
+#' 
+#' @param \dots Additional arguments passed to the plot function (see details).
+#' 
+#' @return \code{List} with result objects \item{mEm}{Absolute row-wise model
 #' error.} \item{mEn}{Absolute column-wise model error.} \item{mRm}{Mean
 #' row-wise explained variance.} \item{mRn}{Mean column-wise explained
 #' variance.} \item{mRt}{Mean total explained variance.} \item{ol}{Number of
@@ -62,7 +67,7 @@
 #' @examples
 #' 
 #' ## load example data set
-#' data(X, envir = environment())
+#' data(example_X)
 #' 
 #' ## truncate the data set for faster computation
 #' X.trunc <- X[1:20,]
@@ -89,10 +94,8 @@ test.parameters <-function(
   rotation = "Varimax",
   plot = FALSE,
   legend,
-  progressbar = FALSE,
   multicore = FALSE,
-  ...,
-  pm = FALSE
+  ...
 ){
   
   ## check for l vs. lw
@@ -111,11 +114,6 @@ test.parameters <-function(
   mRt <- mEm
   ol  <- mEm
   i.pb <- 1
-  
-  ## optionally setup initial progress bar
-  if(progressbar == TRUE & multicore == FALSE) {
-    pb <- txtProgressBar(min = 0, max = length(l.t), char = "=", style = 3)
-  }
   
   if(multicore == TRUE) {
     
@@ -181,11 +179,6 @@ test.parameters <-function(
         mRt[i] <- NA
         ol[i]  <- NA
         
-        ## update progress bar
-        if(progressbar == TRUE) {
-          setTxtProgressBar(pb, i)
-        }
-        
       } else {
         ## if EMMA was successful, assign result values
         mEm[i] <- mean(abs(EM$Em)) # absolute row-wise model error vector
@@ -194,16 +187,7 @@ test.parameters <-function(
         mRn[i] <- mean(EM$Rn) # mean row-wise explained variance vector
         mRt[i] <- mean(c(EM$Rm, EM$Rn)) # mean total explained variance vector
         ol[i]  <- EM$ol # mean total explained variance vector is NA
-        
-        if(progressbar == TRUE & multicore == FALSE) {
-          setTxtProgressBar(pb, i) # update progress bar
-        }
       }
-    }
-    
-    ## close progress bar
-    if(progressbar == TRUE & multicore == FALSE) {
-      close(pb)
     }
   }
   
@@ -240,9 +224,7 @@ test.parameters <-function(
   ## loop through all l-values
   for (i in 1:length(l)) {
     ## assign maximum number of q, i.e. last q before explained variance drops
-    mRti <- mRt[1:(nrow(mRt) - 1),i]
-    mRtj <- mRt[2:nrow(mRt),i]
-    dmRt <- mRtj - mRti
+    dmRt <- diff(mRt[,i])
     q.max[i] <- q[dmRt < 0][1]
   }
   
@@ -545,10 +527,6 @@ test.parameters <-function(
           zlim = c(min(ol, na.rm = TRUE), max(ol, na.rm = TRUE)))
     text(q.t, l.t, ol, cex = cex)
   }
-  
-  ## optionally add pm
-  if(pm == TRUE) {pm <- check.data(matrix(runif(4), ncol = 2),
-                                   5, 0.01, 100, invisible = FALSE)}
   
   ## readjust plot margins
   par(oma = c(0, 0, 0, 0))

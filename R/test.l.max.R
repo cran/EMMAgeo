@@ -1,16 +1,23 @@
-#' Function to find maximum possible l value.
+#' Find maximum possible wight transformation value.
 #' 
 #' This function approximates the highest possible value for l in a nested
-#' loop.
+#' loop. It uses \code{test.l} and does not need any further parameters. It 
+#' starts with l between zero and 0.5 and iteratively approximates the last 
+#' possible vlaues for which the weight-transformed matrix of the input data
+#' still allows eigenspace extraction.
 #' 
 #' 
-#' @param X Numeric matrix with m samples (rows) and n variables (columns).
-#' @param n Numeric scalar, number of loop runs and values per loop.
+#' @param X \code{Numeric} matrix, input data set with m samples (rows) 
+#' and n variables (columns).
+#' 
+#' @param n \code{Numeric} scalar, number of loop runs and values per loop.
+#' 
 #' @param \dots Further arguments passed to the function.
-#' @return A numeric scalar, maximal possible l value.
+#' 
+#' @return \code{Numeric} scalar, maximal possible l value.
+#' 
 #' @author Michael Dietze, Elisabeth Dietze
-#' @seealso \code{\link{EMMA}}, \code{\link{check.data}},
-#' \code{\link{test.parameters}}
+#' @seealso \code{\link{EMMA}}, \code{\link{test.l}}
 #' @references Dietze E, Hartmann K, Diekmann B, IJmker J, Lehmkuhl F, Opitz S,
 #' Stauch G, Wuennemann B, Borchers A. 2012. An end-member algorithm for
 #' deciphering modern detrital processes from lake sediments of Lake Donggi
@@ -22,7 +29,7 @@
 #' @examples
 #' 
 #' ## load example data set
-#' data(X, envir = environment())
+#' data(example_X)
 #' 
 #' ## create weight transformation limits vector
 #' l <- seq(from = 0, to = 0.6, by = 0.02)

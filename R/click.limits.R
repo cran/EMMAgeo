@@ -1,25 +1,27 @@
 #' Define mode limits by mouse clicks.
 #' 
-#' This function allows to define limits for robust end-members by mouse clicks
+#' This function allows defining limits for robust end-members by mouse clicks
 #' on a combined plot output, showing a histogram and all end-members together.
 #' Clicks must be placed in the order lower limit, upper limit - for each
 #' end-member successively.
 #' 
-#' @param data Output of \code{\link{test.robustness}}, a list with several
-#' objects.
-#' @param n Numeric scalar with number of target end-members (i.e. half the
-#' number of limits).
-#' @param classunits Numeric vector, optional class units (e.g. micrometers or
-#' phi-units).
-#' @return Numeric matrix with limit classes. The first row contains lower
+#' @param data \code{List} object, output of \code{\link{test.robustness}}.
+#' 
+#' @param n \code{Numeric} scalar, number of target end-members.
+#' 
+#' @param classunits \code{Numeric} vector, optional class units (e.g. 
+#' micrometers or phi-units).
+#' 
+#' @return \code{Numeric} matrix, limit classes. The first row contains lower
 #' limits, the second row upper limits for each end-member.
+#' 
 #' @author Michael Dietze, Elisabeth Dietze
 #' @seealso \code{\link{test.robustness}}, \code{\link{robust.EM}}
 #' @keywords EMMA
 #' @examples
 #' 
 #' ## load example data set
-#' data(X, envir = environment())
+#' data(example_X)
 #' 
 #' ## Test robustness
 #' q <- 4:7
@@ -27,11 +29,11 @@
 #' TR <- test.robustness(X = X, q = q, l = l)
 #' 
 #' ## define 2 limits by mouse clicks (uncomment to use).
-#' # limits <- define.limits(data = TR, n = 2)
+#' # limits <- click.limits(data = TR, n = 2)
 #' # limits  
 #' 
-#' @export define.limits
-define.limits <- function(
+#' @export click.limits
+click.limits <- function(
   data,
   n,
   classunits

@@ -19,22 +19,34 @@
 #' modified wrapper function for the function \code{test.robustness()}.
 #' 
 #' 
-#' @param X Numeric matrix with m samples (rows) and n variables (columns).
-#' @param q Numeric matrix, definitions of minimum and maximum number of
-#' end-members (cf. \code{get.q()}), required.
-#' @param l Numeric vector, weight transformation limit values, corresponding
-#' to the matrix q, required.
-#' @param plot Logical scalar, option to plot the results (cf. details for 
-#' explanations), default is \code{TRUE}.
-#' @param col.q Logical scalar, option to colour end-member loadings by the 
-#' number of end-members which were used to create the model realisation,
+#' @param X \code{Numeric} matrix, input data set with m samples (rows) 
+#' and n variables (columns).
+#' 
+#' @param q \code{Numeric} matrix, definitions of minimum and maximum number
+#' of end-members (cf. \code{get.q()}), required.
+#' 
+#' @param l \code{Numeric} vector, weight transformation limit values, 
+#' corresponding to the matrix q, required.
+#' 
+#' @param classunits \code{Numeric} vector, optional class units 
+#' (e.g. micrometers or phi-units) of the same length as columns of \code{X}.
+#' 
+#' @param plot \code{Logical} scalar, option to plot the results (cf. 
+#' details for explanations), default is \code{TRUE}.
+#' 
+#' @param col.q \code{Logical} scalar, option to colour end-member loadings by  
+#' the number of end-members which were used to create the model realisation,
 #' default is \code{TRUE}.
-#' @param bw Numeric scalar, optional manual setting of the kde bandwidth. 
-#' By default, bw is calculated as 1 percent of the number of grain-size 
-#' classes.
+#' 
+#' @param bw \code{Numeric} scalar, optional manual setting of the kde 
+#' bandwidth. By default, bw is calculated as 1 percent of the number of 
+#' grain-size classes.
+#' 
 #' @param \dots Further arguments passed to the function.
+#' 
 #' @return \code{List} object with all modelled end-members, each described by
 #' input parameters, mode position, quality measures and value distributions.
+#' 
 #' @author Michael Dietze, Elisabeth Dietze
 #' @seealso \code{\link{EMMA}}, \code{\link{test.l.max}}
 #' @references Dietze E, Hartmann K, Diekmann B, IJmker J, Lehmkuhl F, Opitz S,
@@ -45,29 +57,51 @@
 #' @examples
 #' 
 #' ## load example data set
-#' data(X, envir = environment())
+#' data(example_X)
 #' 
 #' ## define input parameters
 #' l <- c(0, 0.05, 0.10)
 #' q <- cbind(c(2, 2, 3), c(5, 6, 4))
 #' 
 #' ## infer l-vector
-#' em_pot <- model.em(X = X, q = q, l = l)
+#' em_pot <- model.EM(X = X, q = q, l = l)
 #' 
-#' @export model.em
-model.em <- function(
+#' @export model.EM
+model.EM <- function(
   X,
   q,
   l,
+  classunits,
   plot = TRUE,
   col.q = TRUE,
   bw,
   ...
 ) {
   
+  ## check/set class units
+  if(missing(classunits) == TRUE) {
+    
+    classunits <- seq(from = 1, to = ncol(X)) 
+  }
+  
   ## check for l vs. lw
   if("lw" %in% names(list(...))) {
     stop('Parameter "lw" is depreciated. Use "l" instead.')
+  }
+  
+  ## check7set log option
+  if("log" %in% names(list(...))) {
+    
+    log_plot <- list(...)$log
+  } else {
+    
+    log_plot <- ""
+  }
+  
+  ## check/set l
+  if(class(q) == "EMMAgeo_q") {
+    
+    l <- as.numeric(rownames(q))
   }
   
   ## check input data
@@ -86,6 +120,9 @@ model.em <- function(
   ## run test.robustness()
   em <- test.robustness(X = X, P = P, ...)
   
+  ## assign class units
+  em$modes_classunits <- classunits[em$modes]
+
   ## assign plot colour
   if(col.q == TRUE) {
     plot_col <- em$q - min(em$q) + 1
@@ -97,26 +134,46 @@ model.em <- function(
   ## optionally, plot output
   if(plot == TRUE) {
     
+    ## create plot object
+    em_plot <- em
+    
+    ## set negative values to zero
+    em_plot$loadings[em_plot$loadings < 0] <- 0
+    em_plot$Vqsn[em_plot$Vqsn < 0] <- 0
+    
+    ## get old margins
+    mar_old <- par()$mar
+    
+    ## set new margins
+    par(mar = c(5.1, 4.1, 4.1, 4.1))
+    
     ## create empty, scaled plot
     plot(NA, 
-         xlim = c(1,ncol(em$loadings)), 
-         ylim = c(min(em$loadings), max(em$loadings) * 1.1),
+         xlim = range(classunits), 
+         ylim = c(min(em_plot$loadings), 
+                  max(em_plot$loadings) * 1.1),
          xlab = "Class",
-         ylab = "Contribution",
-         main = paste("Loadings (n = ", nrow(em$loadings), ")", sep = ""))
-    
+         ylab = "Contribution", 
+         log = log_plot,
+         main = paste("Loadings (n = ", 
+                      nrow(em_plot$loadings), 
+                      ")", 
+                      sep = ""))
+
     ## add all potential loadings
-    for(i in 1:nrow(em$loadings)) {
-      lines(x = 1:ncol(em$loadings),
-            y = em$loadings[i,],
-            col = adjustcolor(col = plot_col[i], alpha.f = 0.3))
+    for(i in 1:nrow(em_plot$loadings)) {
+      lines(x = classunits,
+            y = em_plot$loadings[i,],
+            col = adjustcolor(col = plot_col[i], 
+                              alpha.f = 0.3))
     }
     
     ## add cumulate mode position plot
     par(new = TRUE)
-    plot(x = sort(em$modes),
-         y = 1:length(em$modes),
-         xlim = c(1,ncol(em$loadings)),
+    
+    plot(x = sort(em_plot$modes),
+         y = 1:length(em_plot$modes),
+         xlim = c(1,ncol(em_plot$loadings)),
          type = "b",
          lwd = 2,
          col = plot_col,
@@ -125,7 +182,7 @@ model.em <- function(
     
     ## add mode position KDE plot
     par(new = TRUE)
-    kde <- density(x = em$modes,
+    kde <- density(x = em_plot$modes,
                    from = 1, 
                    to = ncol(X),
                    bw = bw)
@@ -134,16 +191,38 @@ model.em <- function(
          lwd = 2,
          ann = FALSE,
          axes = FALSE)
-  }
+    axis(side = 4)
+    mtext(text = "Density", 
+          side = 4, 
+          line = 2.5)
   
   if(col.q == TRUE) {
     legend(x = "top",
-           legend = paste("q = ", seq(from = min(em$q), 
-                                      to = max(em$q))),
+           legend = paste("q = ", seq(from = min(em_plot$q), 
+                                      to = max(em_plot$q))),
            text.col = sort(x = unique(x = plot_col)),
            horiz = TRUE,
            box.lty = 0)
   }
+    
+    ## create empty plot, scaled to initial plot
+    par(new = TRUE)
+    
+    plot(NA, 
+         xlim = range(classunits), 
+         ylim = c(min(em_plot$loadings), 
+                  max(em_plot$loadings) * 1.1),
+         log = log_plot,
+         ann = FALSE,
+         axes = FALSE)
+   
+    ## restore old margins
+    par(mar = mar_old)
+  }
+  
+  
+  ## set class
+  class(em) <- "EMMAgeo_empot"
 
   ## return output
   return(em)

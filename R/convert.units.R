@@ -1,14 +1,17 @@
-#' Function to convert between phi and micrometers.
+#' Convert between phi and micrometers.
 #' 
 #' The function converts values from the phi-scale to the micrometer-scale and
 #' vice versa.
 #' 
 #' 
-#' @param phi Numeric vector with grain-size class values in phi to be
+#' @param phi \code{Numeric} vector, grain-size class values in phi to be
 #' converted.
-#' @param mu Numeric vector with grain-size class values in micrometres to be
-#' converted.
-#' @return Numeric vector with converted grain-size class values.
+#' 
+#' @param mu \code{Numeric} vector, grain-size class values in micrometres 
+#' to be converted.
+#' 
+#' @return \code{Numeric} vector, converted grain-size class values.
+#' 
 #' @author Michael Dietze, Elisabeth Dietze
 #' @seealso \code{\link{interpolate.classes}}
 #' @keywords EMMA
@@ -21,7 +24,7 @@
 #' mu  <- convert.units(phi = phi)
 #' mu
 #' 
-#' ## convert and show phi to mu
+#' ## convert and show mu to phi
 #' convert.units(mu = mu)
 #' 
 #' @export convert.units

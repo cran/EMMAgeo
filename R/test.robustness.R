@@ -1,39 +1,12 @@
-#' Function to test model robustness.
+#' Test model robustness.
 #' 
-#' All possible combinations of number of end-members and weight transformation
-#' limits are used to perform EMMA. The resulting loadings are written to an
-#' output matrix and mode positions (i.e. class with maximum loading) of all
-#' loadings are evaluated and returned.
+#' This function takes a definition of weight transformation 
+#' limits and corresponding minimum and maximum numbers of end-members to 
+#' model all end-member scenarios in accordance with these parameters. Based 
+#' on the output the user can decide on robust end-members.
 #' 
 #' The function value \code{$loadings} is redundant but was added for user
-#' convenience.
-#' 
-#' @param X Numeric matrix with m samples (rows) and n variables (columns).
-#' @param q Numeric vector with number of end-members to be modelled.
-#' @param l Numeric vector specifying the weight tranformation limits, i.e.
-#' quantiles; default is 0.
-#' @param P Numeric matrix, optional alternative input parameters for q and l,
-#' either of the form m:3 with m variations in the columns q.min, q.max, l or
-#' of the form m:2 with m variations in the columns q, l.
-#' @param c Numeric scalar specifying the constant sum scaling parameter, e.g.
-#' 1, 100, 1000; default is 100.
-#' @param classunits Numeric vector, optional class units (e.g. phi classes or
-#' micrometers) of the same length as columns of X.
-#' @param ID Numeric or character vector, optional sample IDs of the same
-#' length as columns of X.
-#' @param rotation Character scalar, rotation type, default is "Varimax" (cf.
-#' Dietze et al., 2012). One out of the rotations provided in GPArotation is
-#' possible (cf. \code{\link{rotations}}).
-#' @param ol.rej Numeric scalar, optional rejection threshold for overlapping
-#' criterion.  All model runs with overlapping end-members greater than the
-#' specified integer will be removed.
-#' @param mRt.rej Numeric scalar, optional rejection threshold for mean total
-#' explained variance criterion. All modelled end-members below the specified
-#' value will be removed.
-#' @param plot Logical scalar, optional graphical output of the results,
-#' default is FALSE. If set to TRUE, end-member loadings and end-member scores
-#' are plotted.
-#' @param \dots Additional arguments passed to the plot function. Since the
+#' convenience.\cr Since the
 #' function returns two plots, additional graphical parameters must be
 #' specified as vector with the first element for the first plot and the second
 #' element for the second plot. If graphical parameters are natively vectors
@@ -41,13 +14,52 @@
 #' vector as a row. If colours are specified, \code{colour} should be used
 #' instead of \code{col}. \code{ylim} can only be modified for the first plot.
 #' See example section for further advice.
-#' @param pm Logical scalar to enable pm.
+#' 
+#' @param X Numeric matrix with m samples (rows) and n variables (columns).
+#' 
+#' @param q Numeric vector with number of end-members to be modelled.
+#' 
+#' @param l Numeric vector specifying the weight tranformation limits, i.e.
+#' quantiles; default is 0.
+#' 
+#' @param P Numeric matrix, optional alternative input parameters for q and l,
+#' either of the form m:3 with m variations in the columns q.min, q.max, l or
+#' of the form m:2 with m variations in the columns q, l.
+#' 
+#' @param c Numeric scalar specifying the constant sum scaling parameter, e.g.
+#' 1, 100, 1000; default is 100.
+#' 
+#' @param classunits Numeric vector, optional class units (e.g. phi classes or
+#' micrometers) of the same length as columns of X.
+#' 
+#' @param ID Numeric or character vector, optional sample IDs of the same
+#' length as columns of X.
+#' 
+#' @param rotation Character scalar, rotation type, default is "Varimax" (cf.
+#' Dietze et al., 2012). One out of the rotations provided in GPArotation is
+#' possible (cf. \code{\link{rotations}}).
+#' 
+#' @param ol.rej Numeric scalar, optional rejection threshold for overlapping
+#' criterion.  All model runs with overlapping end-members greater than the
+#' specified integer will be removed.
+#' 
+#' @param mRt.rej Numeric scalar, optional rejection threshold for mean total
+#' explained variance criterion. All modelled end-members below the specified
+#' value will be removed.
+#' 
+#' @param plot Logical scalar, optional graphical output of the results,
+#' default is FALSE. If set to TRUE, end-member loadings and end-member scores
+#' are plotted.
+#' 
+#' @param \dots Additional arguments passed to the plot function (see details).
+#' 
 #' @return A list with objects \item{q}{Vector with q.} \item{l}{Vector with
 #' l.} \item{modes}{Vector with mode class.} \item{mRt}{Vector with mean total
 #' explained variance.} \item{ol}{Vector with n overlapping end-members.}
 #' \item{loadings}{Matrix with normalised rescaled end-member loadings.}
 #' \item{Vqsn}{Matrix with rescaled end-member loadings.} \item{Vqn}{Matrix
 #' with normalised factor loadings.}
+#' 
 #' @author Michael Dietze, Elisabeth Dietze
 #' @references Dietze E, Hartmann K, Diekmann B, IJmker J, Lehmkuhl F, Opitz S,
 #' Stauch G, Wuennemann B, Borchers A. 2012. An end-member algorithm for
@@ -57,7 +69,7 @@
 #' @examples
 #' 
 #' ## load example data set
-#' data(X, envir = environment())
+#' data(example_X)
 #' 
 #' ## Example 1 - perform the most simple test
 #' q  <- 4:7
@@ -121,8 +133,7 @@ test.robustness <- function(
   ol.rej,
   mRt.rej,
   plot = FALSE,
-  ...,
-  pm = FALSE
+  ...
 ){
   
   ## check for l vs. lw
@@ -297,10 +308,6 @@ test.robustness <- function(
         oma = c(0, 0, 0, 0))
   }
   
-  ## optionally add pm
-  if(pm == TRUE) {pm <- check.data(matrix(runif(4), ncol = 2), 
-                                   5, 0.01, 100, invisible = FALSE)}
-  
   ## return results
   list(q = data.t[,1],
        l = data.t[,2],
@@ -314,5 +321,8 @@ test.robustness <- function(
        ol = data.t[,10],
        loadings = Vqsn.t,
        Vqsn = Vqsn.t,
-       Vqn = Vqn.t)
+       Vqn = Vqn.t,
+       X_in = X,
+       l_in = unique(l.t),
+       modes_classunits = classunits[data.t[,3]])
 }

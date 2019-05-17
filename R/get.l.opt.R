@@ -1,35 +1,48 @@
 #' Identify optimum weight transformation value
 #' 
-#' This function returns for a series of input vaules that weight 
-#' transformation value, which yielded the highest measure of model quality.#' 
+#' This function returns for a series of input vaules the weight 
+#' transformation value, which yielded the highest measure of model quality.
 #' 
-#' @param X Numeric matrix with m samples (rows) and n variables (columns).
-#' @param l Numeric vector of weight transformation values to test.
-#' @param quality Charcter scalar, qualtiy measure for against which to test
-#' the influence of \code{l}. One out of \code{"mRm"}, \code{"mRn"}, 
-#' \code{"mRt"}, \code{"mEm"}, \code{"mEn"} and \code{"mEt"}. Default is 
-#' \code{"mRt"}.
-#' @param Vqn Numeric matrix specifying optional unscaled user-defined
+#' The parameter \code{quality} can be one out of the following keywords: 
+#' \code{"mRm"}, \code{"mRn"}, \code{"mRt"}, \code{"mEm"}, \code{"mEn"} and 
+#' \code{"mEt"}. See \code{\link{EMMA}} for definition of these keywords.
+#' 
+#' @param X \code{Numeric} matrix, input data set with m samples (rows) 
+#' and n variables (columns).
+#' 
+#' @param l \code{Numeric} vector, weight transformation values to test.
+#' 
+#' @param quality \code{Character} scalar, quality measure for against 
+#' which to test the influence of \code{l}. See details for a list 
+#' of the a vailable keywords. Default is \code{"mRt"}.
+#' 
+#' @param Vqn \code{Numeric} matrix specifying optional unscaled user-defined
 #' end-member loadings.
-#' @param rotation Character scalar, rotation type, default is "Varimax" (cf.
-#' Dietze et al., 2012). One out of the rotations provided in GPArotation is
-#' possible (cf. \code{\link{rotations}}).
-#' @param plot Logical scalar, optional graphical output of the result.
+#' 
+#' @param rotation \code{Character} scalar, rotation type, default is "Varimax"
+#' (cf. \code{\link{EMMA}} for further information).
+#' 
+#' @param plot \code{Logical} scalar, optional graphical output of the result.
+#' 
 #' @param \dots Further arguments passed to the function.
-#' @return Numeric scalar, weight tranformation value with optimal EMMA result.
+#' 
+#' @return \code{Numeric} scalar, weight tranformation value with optimal 
+#' EMMA result.
+#' 
 #' @author Michael Dietze, Elisabeth Dietze
 #' @seealso \code{\link{EMMA}}
-#' @references Dietze E, Hartmann K, Diekmann B, IJmker J, Lehmkuhl F, Opitz S,
-#' Stauch G, Wuennemann B, Borchers A. 2012. An end-member algorithm for
-#' deciphering modern detrital processes from lake sediments of Lake Donggi
-#' Cona, NE Tibetan Plateau, China. Sedimentary Geology 243-244: 169-180.
 #' @keywords EMMA
 #' @examples
 #' 
 #' ## load example data set
-#' data(X, envir = environment())
+#' data(example_X)
+#' data(example_EMpot)
 #' 
-#' ## TO BE DONE!!!
+#' ## get optimal l-value, uncomment to run
+#' # get.l.opt(X = X, 
+#' #           l = seq(from = 0, to = 0.1, by = 0.01), 
+#' #           Vqn = EMpot$Vqn, 
+#' #           quality = "mRt")
 #' 
 #' @export get.l.opt
 get.l.opt <- function(
