@@ -31,6 +31,9 @@ maximum possible value). It uses the function \code{test.l.max()}.
 ## load example data set
 data(example_X)
 
+## truncate data set to save computation time, not needed in real life
+X <- X[1:10, 1:10]
+
 ## infer l-vector
 l <- get.l(X = X, 
            n = 5, 
@@ -39,7 +42,7 @@ l <- get.l(X = X,
 
 }
 \seealso{
-\code{\link{test.l.max}}
+\code{test.l.max}
 }
 \author{
 Michael Dietze, Elisabeth Dietze

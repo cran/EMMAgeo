@@ -37,7 +37,7 @@
 #' 
 #' @param rotation Character scalar, rotation type, default is "Varimax" (cf.
 #' Dietze et al., 2012). One out of the rotations provided in GPArotation is
-#' possible (cf. \code{\link{rotations}}).
+#' possible.
 #' 
 #' @param ol.rej Numeric scalar, optional rejection threshold for overlapping
 #' criterion.  All model runs with overlapping end-members greater than the
@@ -61,11 +61,14 @@
 #' with normalised factor loadings.}
 #' 
 #' @author Michael Dietze, Elisabeth Dietze
+#' 
 #' @references Dietze E, Hartmann K, Diekmann B, IJmker J, Lehmkuhl F, Opitz S,
 #' Stauch G, Wuennemann B, Borchers A. 2012. An end-member algorithm for
 #' deciphering modern detrital processes from lake sediments of Lake Donggi
-#' Cona, NE Tibetan Plateau, China. Sedimentary Geology 243-244: 169-180. \cr
+#' Cona, NE Tibetan Plateau, China. Sedimentary Geology 243-244: 169-180.
+#' 
 #' @keywords EMMA
+#' 
 #' @examples
 #' 
 #' ## load example data set
@@ -73,7 +76,7 @@
 #' 
 #' ## Example 1 - perform the most simple test
 #' q  <- 4:7
-#' l <- seq(from = 0, to = 0.1, by = 0.02)
+#' l <- seq(from = 0, to = 0.1, by = 0.05)
 #' 
 #' M1  <- test.robustness(X = X, q = q, l = l, 
 #'                        ol.rej = 1, mRt.rej = 0.8, 

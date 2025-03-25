@@ -30,10 +30,10 @@ still allows eigenspace extraction.
 data(example_X)
 
 ## create weight transformation limits vector
-l <- seq(from = 0, to = 0.6, by = 0.02)
+l <- seq(from = 0, to = 0.6, by = 0.05)
 
-## test l.max
-l.max <- test.l.max(X = X)
+## test l.max (uncomment to run, may take more than 10 sec to run)
+# l.max <- test.l.max(X = X)
 
 
 
@@ -48,7 +48,7 @@ Large-Scale Q-Mode Factor Analysis and Calculation of Factor Scores.
 Mathematical Geology 3: 61-77.
 }
 \seealso{
-\code{\link{EMMA}}, \code{\link{test.l}}
+\code{EMMA}, \code{test.l}
 }
 \author{
 Michael Dietze, Elisabeth Dietze
